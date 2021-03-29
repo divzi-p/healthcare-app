@@ -1,0 +1,88 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string"
+    }
+  },
+  "functions": [],
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2020-10-01",
+      "name": "rg-healthcareapp1",
+      "location": "[parameters('location')]"
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "hcPlanDeploy",
+      "resourceGroup": "rg-healthcareapp1",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "services_fhirapi_healthcare_001_name": {
+            "value": "fhirapi-healthcare-002"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "services_fhirapi_healthcare_001_name": {
+              "type": "string",
+              "defaultValue": "fhirapi-healthcare-001"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.HealthcareApis/services",
+              "apiVersion": "2021-01-11",
+              "name": "[parameters('services_fhirapi_healthcare_001_name')]",
+              "location": "southeastasia",
+              "kind": "fhir-R4",
+              "properties": {
+                "accessPolicies": [],
+                "cosmosDbConfiguration": {
+                  "offerThroughput": 400
+                },
+                "authenticationConfiguration": {
+                  "authority": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47",
+                  "audience": "[format('https://{0}.azurehealthcareapis.com', parameters('services_fhirapi_healthcare_001_name'))]",
+                  "smartProxyEnabled": false
+                },
+                "corsConfiguration": {
+                  "origins": [],
+                  "headers": [],
+                  "methods": [],
+                  "allowCredentials": false
+                },
+                "exportConfiguration": {},
+                "acrConfiguration": {
+                  "loginServers": []
+                },
+                "privateEndpointConnections": [],
+                "publicNetworkAccess": "Enabled"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', 'rg-healthcareapp1')]"
+      ]
+    }
+  ],
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.3.126.58533",
+      "templateHash": "153809745440947160"
+    }
+  }
+}
