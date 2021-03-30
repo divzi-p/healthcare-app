@@ -1,6 +1,8 @@
 # This is a basic workflow that is manually triggered
 
 name: Manual workflow
+env:
+  location: eastasia
 on:
   workflow_dispatch
   
@@ -37,5 +39,5 @@ jobs:
       - name: Deploy AZ CLI
         uses: Azure/cli@1.0.4
         with:
-          inlineScript: az deployment sub create -f ./main.bicep -l eastasia --parameters location=eastasia
+          inlineScript: az deployment sub create -f ./main.bicep -l ${{env.location}} --parameters location=${{env.build_name}}
  
