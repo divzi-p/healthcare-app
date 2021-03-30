@@ -32,7 +32,7 @@ jobs:
         shell: bash
         working-directory: bicep
       
-      steps:
+    steps:
       - uses: actions/checkout@v2
       # Log into Azure
       - uses: azure/login@v1
