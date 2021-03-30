@@ -1,0 +1,41 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+on:
+  workflow_dispatch
+  
+jobs:
+  bicepbuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: bicep    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Azure CLI install bicep
+        uses: Azure/cli@1.0.4
+        with:
+         inlineScript: az bicep install
+         
+      - name: Azure CLI build bicep
+        uses: Azure/cli@1.0.4
+        with:
+         inlineScript: az bicep build --files main.bicep fhir-template.bicep
+
+      # Log into Azure
+      - uses: azure/login@v1
+        with:
+         creds: ${{ secrets.AZURE_CREDENTIALS  }}
+
+      # Deploy ARM Template
+      - name: Deploy AZ CLI
+        uses: Azure/cli@1.0.4
+        with:
+          inlineScript: az deployment sub create -f ./main.bicep -l eastasia --parameters location=eastasia
+ 
