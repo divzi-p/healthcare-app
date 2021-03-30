@@ -1,6 +1,6 @@
 # This is a basic workflow that is manually triggered
 
-name: Manual workflow
+name: Manual bicep deploy workflow
 env:
   location: eastasia
 on:
@@ -9,14 +9,10 @@ on:
 jobs:
   bicepbuild:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-  deploy:
-    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
-        working-directory: bicep    
+        working-directory: bicep  
     steps:
       - uses: actions/checkout@v2
       
@@ -29,14 +25,22 @@ jobs:
         uses: Azure/cli@1.0.4
         with:
          inlineScript: az bicep build --files main.bicep fhir-template.bicep
-
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: bicep
+      
+      steps:
+      - uses: actions/checkout@v2
       # Log into Azure
       - uses: azure/login@v1
         with:
          creds: ${{ secrets.AZURE_CREDENTIALS  }}
 
       # Deploy ARM Template
-      - name: Deploy AZ CLI
+      - name: Deploy bicep via cli deploy
         uses: Azure/cli@1.0.4
         with:
           inlineScript: az deployment sub create -f ./main.bicep -l ${{env.location}} --parameters location=${{env.build_name}}
