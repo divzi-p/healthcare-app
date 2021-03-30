@@ -44,5 +44,5 @@ jobs:
       - name: Deploy bicep via cli deploy
         uses: Azure/cli@1.0.4
         with:
-          inlineScript: az deployment sub create -f bicep/main.bicep -l ${{env.location}} --parameters location=${{env.build_name}}
+          inlineScript: az deployment sub create -f bicep/main.bicep -l ${{env.location}} --parameters location=${{env.location}}
  
