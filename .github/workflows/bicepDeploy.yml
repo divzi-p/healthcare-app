@@ -24,7 +24,7 @@ jobs:
       - name: Azure CLI build bicep
         uses: Azure/cli@1.0.4
         with:
-         inlineScript: az bicep build --files main.bicep fhir-template.bicep
+         inlineScript: az bicep build --files main.bicep
   deploy:
     runs-on: ubuntu-latest
     defaults:
@@ -43,5 +43,5 @@ jobs:
       - name: Deploy bicep via cli deploy
         uses: Azure/cli@1.0.4
         with:
-          inlineScript: az deployment sub create -f ./main.bicep -l ${{env.location}} --parameters location=${{env.build_name}}
+          inlineScript: az deployment sub create -f main.bicep -l ${{env.location}} --parameters location=${{env.build_name}}
  
